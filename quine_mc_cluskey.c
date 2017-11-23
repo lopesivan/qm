@@ -44,7 +44,8 @@ static int wprim[MAX];          // essential prime implicant (TRUE/FALSE)  /  we
 static int nwprim[MAX];     // needed not essential prime implicant  /  ben�tigter unwesentlicher Primimplikant
 
 //Count all set bits of the integer number  /  Z�hlen der gesetzen Bits in einer Integerzahl
-static int popCount(uint32_t x) { // Taken from book "Hackers Delight"  / Aus dem Buch "Hackers Delight"
+static int popCount (uint32_t x)  // Taken from book "Hackers Delight"  / Aus dem Buch "Hackers Delight"
+{
     x = x - ((x >> 1) & 0x55555555);
     x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
     x = (x + (x >> 4)) & 0x0F0F0F0F;
@@ -54,10 +55,12 @@ static int popCount(uint32_t x) { // Taken from book "Hackers Delight"  / Aus de
 }
 
 //Calculate hamming weight/distance of two integer numbers  /  Berechnung der Hammingdistanz von 2 Integerzahlen
-static int hammingWeight(uint32_t v1, uint32_t v2) {
-    return popCount(v1 ^ v2);
+static int hammingWeight (uint32_t v1, uint32_t v2)
+{
+    return popCount (v1 ^ v2);
 }
 
+/*
 //Output upper part of term in console  /  Oberer Teil des Terms in der Konsole ausgeben
 static void upperTerm(int bitfield, int mask, int num) {
     if (mask) {
@@ -72,7 +75,9 @@ static void upperTerm(int bitfield, int mask, int num) {
         }
     }
 }
+*/
 
+/*
 //Output lower part of term in console  /  Unterer Teil des Terms in der Konsole ausgeben
 static void lowerTerm(int mask, int num) {
     if (mask) {
@@ -84,17 +89,24 @@ static void lowerTerm(int mask, int num) {
         }
     }
 }
+*/
 
-static void writeOutput(int bitfield, int mask, size_t num, int * out) {
-    if (mask) {
+static void writeOutput (int bitfield, int mask, size_t num, int * out)
+{
+    if (mask)
+    {
         int z;
-        for ( z = 0; z < num; z++) {
-            if (mask & (1 << z)) {
+        for ( z = 0; z < num; z++)
+        {
+            if (mask & (1 << z))
+            {
                 if (bitfield & (1 << z))
                     out[z] = 0;
                 else
                     out[z] = 1;
-            } else {
+            }
+            else
+            {
                 out[z] = -1;
             }
         }
@@ -102,15 +114,21 @@ static void writeOutput(int bitfield, int mask, size_t num, int * out) {
 }
 
 //Output a term to console  /  Ausgabe eines Terms in der Konsole
+/*
+
 static void outputTerm(int bitfield, int mask, int num) {
     upperTerm(bitfield, mask, num);
     if (mask) printf("\n");
     lowerTerm(mask, num);
 }
+*/
+
 
 //Determines whether "value" contains "part"  /  Bestimmt, ob "value" "part" beinhaltet
-static int contains(int value, int32_t mask, int part, int partmask) {
-    if ((value & partmask) == (part & partmask)) {
+static int contains (int value, int32_t mask, int part, int partmask)
+{
+    if ((value & partmask) == (part & partmask))
+    {
         if ((mask & partmask) ==  partmask)
             return TRUE;
     }
@@ -118,16 +136,17 @@ static int contains(int value, int32_t mask, int part, int partmask) {
 }
 
 // free memory alocated by qmc_simplify
-void qmc_free(void * p)
+void qmc_free (void * p)
 {
-    free(p);
+    free (p);
 }
 
 // @num count of variables
 // @out_size will point to the number clauses
 // *out is in the form of DNF. (*out) is an array which has @num * @out_size elements.
 // Each consecutive @num elements is a clause.
-int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
+int qmc_simplify (const bool * table, size_t num, int ** out, size_t* out_size)
+{
     // int num = 0; // Number of Variables  /  Anzahl Eing�nge
     int pos = 0;
     int cur = 0;
@@ -160,14 +179,16 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
     }
 
     // Fill all arrays with default values / Alle Arrays mit Standardwert auff�llen
-    for (x = 0; x < MAX; x++) {
+    for (x = 0; x < MAX; x++)
+    {
         primmask[x] = 0;
         prim[x] = 0;
         wprim[x] = FALSE;
         nwprim[x] = FALSE;
         result[x] = FALSE;
         nwprim[x] = TRUE; //unwesentliche Primimplikaten als ben�tigt markieren
-        for (y = 0; y < MAX; y++) {
+        for (y = 0; y < MAX; y++)
+        {
             mask[x][y] = 0;
             minterm[x][y] = 0;
             used[x][y] = FALSE;
@@ -176,11 +197,13 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
 
     // printf("Enter number of variables: ");
     // scanf(" %d", &num);
-    if (num > MAXVARS) {
+    if (num > MAXVARS)
+    {
         // fprintf(stderr, "ERROR: Number of variables too big!\n");
         return 1;
     }
-    if (num < 1) {
+    if (num < 1)
+    {
         // fprintf(stderr, "ERROR: Number of variables must be at least 1!\n");
         return 2;
     }
@@ -189,12 +212,14 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
     // printf("Please enter desired results: ( 0 or 1)\n\n");
 
     cur = 0;
-    for ( x=0; x < pos; x++) {
+    for ( x=0; x < pos; x++)
+    {
         // int value = 0;
         // outputTerm(x, pos - 1, num);
         // printf(" = ");
         // scanf(" %d", &value);
-        if (table[~x & (pos - 1)]) {
+        if (table[~x & (pos - 1)])
+        {
             mask[cur][0] = ((1 << num)- 1);
             minterm[cur][0] = x;
             cur++;
@@ -203,14 +228,20 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
         // printf("\n");
     }
 
-    for (reduction = 0; reduction < MAX; reduction++) {
+    for (reduction = 0; reduction < MAX; reduction++)
+    {
         cur = 0;
         maderedction = FALSE;
-        for (y=0; y < MAX; y++) {
-            for (x=0; x < MAX; x++) {
-                if ((mask[x][reduction]) && (mask[y][reduction])) {
-                    if (popCount(mask[x][reduction]) > 1) { // Do not allow complete removal (problem if all terms are 1)  /  Komplette aufhebung nicht zulassen (sonst problem, wenn alle Terme = 1)
-                        if ((hammingWeight(minterm[x][reduction] & mask[x][reduction], minterm[y][reduction] & mask[y][reduction]) == 1) && (mask[x][reduction] == mask[y][reduction])) { // Simplification only possible if 1 bit differs  /  Vereinfachung nur m�glich, wenn 1 anderst ist
+        for (y=0; y < MAX; y++)
+        {
+            for (x=0; x < MAX; x++)
+            {
+                if ((mask[x][reduction]) && (mask[y][reduction]))
+                {
+                    if (popCount (mask[x][reduction]) > 1)  // Do not allow complete removal (problem if all terms are 1)  /  Komplette aufhebung nicht zulassen (sonst problem, wenn alle Terme = 1)
+                    {
+                        if ((hammingWeight (minterm[x][reduction] & mask[x][reduction], minterm[y][reduction] & mask[y][reduction]) == 1) && (mask[x][reduction] == mask[y][reduction]))  // Simplification only possible if 1 bit differs  /  Vereinfachung nur m�glich, wenn 1 anderst ist
+                        {
                             term = minterm[x][reduction]; // could be mintern x or y /  egal ob mintern x oder minterm y
                             //e.g.:
                             //1110
@@ -220,13 +251,16 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
                             term  &= termmask;
 
                             found = FALSE;
-                            for ( z=0; z<cur; z++) {
-                                if ((minterm[z][reduction+1] == term) && (mask[z][reduction+1] == termmask) ) {
+                            for ( z=0; z<cur; z++)
+                            {
+                                if ((minterm[z][reduction+1] == term) && (mask[z][reduction+1] == termmask) )
+                                {
                                     found = TRUE;
                                 }
                             }
 
-                            if (found == FALSE) {
+                            if (found == FALSE)
+                            {
                                 minterm[cur][reduction+1] = term;
                                 mask[cur][reduction+1] = termmask;
                                 cur++;
@@ -245,17 +279,22 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
 
     prim_count = 0;
     //printf("\nprime implicants:\n");
-    for ( reduction = 0 ; reduction < MAX; reduction++) {
-        for ( x=0 ;x < MAX; x++) {
+    for ( reduction = 0 ; reduction < MAX; reduction++)
+    {
+        for ( x=0 ; x < MAX; x++)
+        {
             //Determine all not used minterms  /  Alle nicht verwendeten Minterme bestimmen
-            if ((used[x][reduction] == FALSE) && (mask[x][reduction]) ) {
+            if ((used[x][reduction] == FALSE) && (mask[x][reduction]) )
+            {
                 //Check if the same prime implicant is already in the list  /  �berpr�fen, ob gleicher Primimplikant bereits in der Liste
                 found = FALSE;
-                for ( z=0; z < prim_count; z++) {
+                for ( z=0; z < prim_count; z++)
+                {
                     if (((prim[z] & primmask[z]) == (minterm[x][reduction] & mask[x][reduction])) &&  (primmask[z] == mask[x][reduction]) )
                         found = TRUE;
                 }
-                if (found == FALSE) {
+                if (found == FALSE)
+                {
                     //outputTerm(minterm[x][reduction], mask[x][reduction], num);
                     //printf("\n");
                     primmask[prim_count] = mask[x][reduction];
@@ -268,46 +307,61 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
 
     //find essential and not essential prime implicants  /  wesentliche und unwesentliche Primimplikanten finden
     //all alle prime implicants are set to "not essential" so far  /  Primimplikanten sind bisher auf "nicht wesentlich" gesetzt
-    for (y=0; y < pos; y++) { //for all minterms  /  alle Minterme durchgehen
+    for (y=0; y < pos; y++)   //for all minterms  /  alle Minterme durchgehen
+    {
         count = 0;
         lastprim = 0;
-        if (mask[y][0]) {
-            for (x=0; x < prim_count; x++ ) { //for all prime implicants  /  alle Primimplikanten durchgehen
-                if (primmask[x]) {
+        if (mask[y][0])
+        {
+            for (x=0; x < prim_count; x++ )   //for all prime implicants  /  alle Primimplikanten durchgehen
+            {
+                if (primmask[x])
+                {
                     // Check if the minterm contains prime implicant  /  the �berpr�fen, ob der Minterm den Primimplikanten beinhaltet
-                    if (contains(minterm[y][0], mask[y][0], prim[x], primmask[x])) {
+                    if (contains (minterm[y][0], mask[y][0], prim[x], primmask[x]))
+                    {
                         count++;
                         lastprim = x;
                     }
                 }
             }
             // If count = 1 then it is a essential prime implicant /  Wenn Anzahl = 1, dann wesentlicher Primimplikant
-            if (count == 1) {
+            if (count == 1)
+            {
                 wprim[lastprim] = TRUE;
             }
         }
     }
 
     // successively testing if it is possible to remove prime implicants from the rest matrix  /  Nacheinander testen, ob es m�gich ist, Primimplikaten der Restmatrix zu entfernen
-    for ( z=0; z < prim_count; z++) {
-        if (primmask[z] ) {
-            if (wprim[z] == FALSE) { // && (rwprim[z] == TRUE))
+    for ( z=0; z < prim_count; z++)
+    {
+        if (primmask[z] )
+        {
+            if (wprim[z] == FALSE)   // && (rwprim[z] == TRUE))
+            {
                 nwprim[z] = FALSE; // mark as "not essential" /  als "nicht ben�tigt" markiert
-                for ( y=0; y < pos; y++) { // for all possibilities  /  alle M�glichkeiten durchgehen
+                for ( y=0; y < pos; y++)   // for all possibilities  /  alle M�glichkeiten durchgehen
+                {
                     res = 0;
-                    for ( x=0; x < prim_count; x++) {
-                        if ( (wprim[x] == TRUE) || (nwprim[x] == TRUE)) {  //essential prime implicant or marked as required  /  wesentlicher Primimplikant oder als ben�tigt markiert
-                            if ((y & primmask[x]) == (prim[x] & primmask[x])) { //All bits must be 1  /  Es m�ssen alle Bits auf einmal auf 1 sein (da And-Verkn�pfung)
+                    for ( x=0; x < prim_count; x++)
+                    {
+                        if ( (wprim[x] == TRUE) || (nwprim[x] == TRUE))    //essential prime implicant or marked as required  /  wesentlicher Primimplikant oder als ben�tigt markiert
+                        {
+                            if ((y & primmask[x]) == (prim[x] & primmask[x]))   //All bits must be 1  /  Es m�ssen alle Bits auf einmal auf 1 sein (da And-Verkn�pfung)
+                            {
                                 res = 1;
                                 break;
                             }
                         }
                     }
                     //printf(" %d\t%d\n", result, result[y]);
-                    if (res == result[y]) {  // compare calculated result with input value /  Berechnetes ergebnis mit sollwert vergleichen
+                    if (res == result[y])    // compare calculated result with input value /  Berechnetes ergebnis mit sollwert vergleichen
+                    {
                         //printf("not needed\n"); //prime implicant not required  /  Primimplikant wird nicht ben�tigt
                     }
-                    else {
+                    else
+                    {
                         //printf("needed\n");
                         nwprim[z] = TRUE; //prime implicant required  /  Primimplikant wird doch ben�tigt
                     }
@@ -317,19 +371,22 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
     }
     // printf("\nResult:\n\n");
 
-    *out = (int *) calloc(sizeof(int), prim_count * num);
+    *out = (int *) calloc (sizeof (int), prim_count * num);
 
     // Output of essential and required prime implicants / Ausgabe der wesentlichen und restlichen ben�tigten Primimplikanten:
     count = 0;
-    for ( x = 0 ; x < prim_count; x++) {
-        if (wprim[x] == TRUE) {
+    for ( x = 0 ; x < prim_count; x++)
+    {
+        if (wprim[x] == TRUE)
+        {
             // if (count > 0) printf("   ");
-            writeOutput(prim[x], primmask[x], num, (*out) + x * num);
+            writeOutput (prim[x], primmask[x], num, (*out) + x * num);
             count++;
         }
-        else if ((wprim[x] == FALSE) && (nwprim[x] == TRUE)) {
+        else if ((wprim[x] == FALSE) && (nwprim[x] == TRUE))
+        {
             // if (count > 0) printf("   ");
-            writeOutput(prim[x], primmask[x], num, (*out) + x * num);
+            writeOutput (prim[x], primmask[x], num, (*out) + x * num);
             count++;
         }
     }
@@ -339,33 +396,39 @@ int qmc_simplify(const bool * table, size_t num, int ** out, size_t* out_size) {
 #if 0
     // Output of essential and required prime implicants / Ausgabe der wesentlichen und restlichen ben�tigten Primimplikanten:
     count = 0;
-    for ( x = 0 ; x < prim_count; x++) {
-        if (wprim[x] == TRUE) {
+    for ( x = 0 ; x < prim_count; x++)
+    {
+        if (wprim[x] == TRUE)
+        {
             // if (count > 0) printf("   ");
-            upperTerm(prim[x], primmask[x], num);
+            upperTerm (prim[x], primmask[x], num);
             count++;
         }
-        else if ((wprim[x] == FALSE) && (nwprim[x] == TRUE)) {
+        else if ((wprim[x] == FALSE) && (nwprim[x] == TRUE))
+        {
             // if (count > 0) printf("   ");
-            upperTerm(prim[x], primmask[x], num);
+            upperTerm (prim[x], primmask[x], num);
             count++;
         }
     }
     // printf("\n");
     count = 0;
-    for ( x = 0 ; x < prim_count; x++) {
-        if (wprim[x] == TRUE) {
+    for ( x = 0 ; x < prim_count; x++)
+    {
+        if (wprim[x] == TRUE)
+        {
             // if (count > 0) printf(" + ");
-            lowerTerm(primmask[x], num);
+            lowerTerm (primmask[x], num);
             count++;
         }
-        else if ((wprim[x] == FALSE) && (nwprim[x] == TRUE)) {
+        else if ((wprim[x] == FALSE) && (nwprim[x] == TRUE))
+        {
             // if (count > 0) printf(" + ");
-            lowerTerm(primmask[x], num);
+            lowerTerm (primmask[x], num);
             count++;
         }
     }
-    printf("\n");
+    printf ("\n");
 #endif
     return 0;
 }
