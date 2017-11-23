@@ -1,0 +1,12 @@
+{
+    "*.c": {
+    "type": "c",
+    "alternate": "{}.h"
+  },
+
+    "*.h": {
+    "type": "h",
+    "alternate": "{}.c"
+  }
+
+}
