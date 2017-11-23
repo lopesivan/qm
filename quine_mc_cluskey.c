@@ -60,37 +60,6 @@ static int hammingWeight (uint32_t v1, uint32_t v2)
     return popCount (v1 ^ v2);
 }
 
-/*
-//Output upper part of term in console  /  Oberer Teil des Terms in der Konsole ausgeben
-static void upperTerm(int bitfield, int mask, int num) {
-    if (mask) {
-        int z;
-        for ( z = 0; z < num; z++) {
-            if (mask & (1 << z)) {
-                if (bitfield & (1 << z))
-                    printf("_");
-                else
-                    printf(" ");
-            }
-        }
-    }
-}
-*/
-
-/*
-//Output lower part of term in console  /  Unterer Teil des Terms in der Konsole ausgeben
-static void lowerTerm(int mask, int num) {
-    if (mask) {
-        int z;
-        for (z = 0; z < num; z++) {
-            if (mask & (1 << z)) {
-                printf("%c", 'z' - (num - 1) + z);
-            }
-        }
-    }
-}
-*/
-
 static void writeOutput (int bitfield, int mask, size_t num, int * out)
 {
     if (mask)
@@ -113,15 +82,6 @@ static void writeOutput (int bitfield, int mask, size_t num, int * out)
     }
 }
 
-//Output a term to console  /  Ausgabe eines Terms in der Konsole
-/*
-
-static void outputTerm(int bitfield, int mask, int num) {
-    upperTerm(bitfield, mask, num);
-    if (mask) printf("\n");
-    lowerTerm(mask, num);
-}
-*/
 
 
 //Determines whether "value" contains "part"  /  Bestimmt, ob "value" "part" beinhaltet
