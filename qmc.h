@@ -37,14 +37,14 @@ extern "C" {
  *
  * @return 0 if succeeds, otherwise fails.
  */
-int qmc_simplify(const bool * table, size_t num, int ** out, size_t * out_size);
+int qmc_simplify (const bool * table, size_t num, int ** out, size_t * out_size);
 
 /**
  * The function used to free *out in qmc_simplify.
  *
  * @param p the pointer needs to be freed.
  */
-void qmc_free(void * p);
+void qmc_free (void * p);
 
 #ifdef __cplusplus
 }
