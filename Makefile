@@ -1,11 +1,32 @@
-# Makefile: A standard Makefile for main.c
+# -----------------------------------------------------------------------------
+# CMake project wrapper Makefile ----------------------------------------------
+# -----------------------------------------------------------------------------
 
-OBJECTS = example.o quine_mc_cluskey.o
+SHELL := /bin/bash
+RM    := rm -rf
+MKDIR := mkdir -p
+BUILD_DIR ?= build
+GENERATOR ?= Xcode
 
-all  : main
-main : $(OBJECTS)
-	$(CC) -o main $^
+all: ./$(BUILD_DIR)/Makefile
+	@ $(MAKE) -C $(BUILD_DIR) -j8
+
+./$(BUILD_DIR)/Makefile:
+	@  ($(MKDIR) $(BUILD_DIR) > /dev/null)
+	@  (cd $(BUILD_DIR) > /dev/null 2>&1 && cmake ..)
 
 clean:
-	/bin/rm -rf main  $(OBJECTS)
-# END OF FILE
+	@ $(MAKE) -C $(BUILD_DIR) clean
+
+bench:
+	@  (cd $(BUILD_DIR) > /dev/null && ctest -L bench --verbose)
+
+test:
+	@  (cd $(BUILD_DIR) > /dev/null && ctest -L unit --verbose)
+
+workspace:
+	@  ($(MKDIR) $(BUILD_DIR) > /dev/null)
+	@ (cd $(BUILD_DIR) > /dev/null && cmake -G $(GENERATOR) ..)
+
+distclean:
+	@- $(RM) -rf ./$(BUILD_DIR)
