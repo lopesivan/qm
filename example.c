@@ -49,9 +49,9 @@ int main()
 
 
     /* simplify the table */
-    if (qmc_simplify(table, 3, &out, &out_size))
+    if (qmc_simplify (table, 3, &out, &out_size))
     {
-        fprintf(stderr, "Simpification failed!\n");
+        fprintf (stderr, "Simpification failed!\n");
         /* No need to call qmc_free(out) if failed */
         return 1;
     }
@@ -60,25 +60,25 @@ int main()
     for (i = 0; i < out_size; ++ i)
     {
         if (i > 0)
-            printf(" + ");
+            printf (" + ");
 
         for (j = 0; j < 3u; ++ j)
         {
             switch (out[i * 3u + j])
             {
             case 0:    /* the literal is false */
-                printf("~");
+                printf ("~");
             case 1:    /* the literal is true */
                 switch (j)
                 {
                 case 0:
-                    printf("A");
+                    printf ("A");
                     break;
                 case 1:
-                    printf("B");
+                    printf ("B");
                     break;
                 case 2:
-                    printf("C");
+                    printf ("C");
                     break;
                 }
                 break;
@@ -88,13 +88,13 @@ int main()
 
     if (out_size == 0) /* All table entries are true or false */
         if (table[0])
-            printf("TRUE");
+            printf ("TRUE");
         else
-            printf("FALSE");
+            printf ("FALSE");
 
-    printf("\n");
+    printf ("\n");
 
-    qmc_free(out);
+    qmc_free (out);
 
     return 0;
 }
