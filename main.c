@@ -1,10 +1,3 @@
-/* ************************************************************************ *
- *                                                                          *
- * - Use this line for test.                                                *
- *                                                                          *
- * $./opt -c -g -Wall -W pedantic prog.c prog2.c opt.sh                     *
- * ************************************************************************ */
-
 #include <stddef.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -14,16 +7,11 @@
 
 #include "qmc.h"
 
-int f4 (bool *table);
-int f3 (bool *table);
-int f2 (bool *table);
-
-unsigned int_pow (int n, unsigned x);
-size_t lines (unsigned int table_rowls);
-void *createTable (unsigned int table_rowls);
-unsigned int rows (unsigned int n_vars);
-
-typedef int (*function) (bool*);
+int          g            (bool* table, size_t n);
+unsigned     int_pow      (int, unsigned);
+size_t       lines        (unsigned int );
+void         *createTable (unsigned int );
+unsigned int rows         (unsigned int );
 
 int
 main (int argc, char **argv)
@@ -36,8 +24,6 @@ main (int argc, char **argv)
 
     bool *table = NULL;
     char *pch   = NULL;
-
-    function f  = NULL;
 
     while ((optch = getopt (argc, argv, optstring)) != -1)
     {
@@ -61,21 +47,6 @@ main (int argc, char **argv)
                 table[i] =  false;
             }
 
-            switch (n_vars)
-            {
-            case 2:
-                f = f2;
-                break;
-            case 3:
-                f = f3;
-                break;
-            case 4:
-                f = f4;
-                break;
-            default:
-                puts ("Unknown option!");
-            }
-
             break;
         case 'm':
             pch = strtok (optarg, ",");
@@ -83,7 +54,6 @@ main (int argc, char **argv)
             while (pch != NULL)
             {
                 table[atoi (pch)] = true;
-                //printf ("%s\n", pch);
                 pch = strtok (NULL, ",");
             }
 
@@ -101,7 +71,7 @@ main (int argc, char **argv)
         printf ("table[%d]=%d\n",i,table[i]);
     }
 
-    f (table);
+    g (table, n_vars);
     free (table);
 
     return 0;
@@ -142,7 +112,7 @@ unsigned int_pow (int n, unsigned x)
     return a;
 }
 
-int f4 (bool* table)
+int g (bool* table, size_t n)
 {
 
     int *out;
@@ -150,7 +120,7 @@ int f4 (bool* table)
     size_t i, j;
 
     /* simplify the table */
-    if (qmc_simplify (table, 4, &out, &out_size))
+    if (qmc_simplify (table, n, &out, &out_size))
     {
         fprintf (stderr, "Simpification failed!\n");
         /* No need to call qmc_free(out) if failed */
@@ -163,28 +133,14 @@ int f4 (bool* table)
         if (i > 0)
             printf (" + ");
 
-        for (j = 0; j < 4u; ++j)
+        for (j = 0; j < n; ++j)
         {
-            switch (out[i * 4u + j])
+            switch (out[i * n + j])
             {
             case 0:    /* the literal is false */
                 printf ("~");
             case 1:    /* the literal is true */
-                switch (j)
-                {
-                case 0:
-                    printf ("D");
-                    break;
-                case 1:
-                    printf ("C");
-                    break;
-                case 2:
-                    printf ("B");
-                    break;
-                case 3:
-                    printf ("A");
-                    break;
-                }
+                printf ("%c", (char) (64 + n - j));
                 break;
             }
         }
@@ -192,124 +148,6 @@ int f4 (bool* table)
 
     if (out_size == 0) /* All table entries are true or false */
     {
-
-        if (table[0])
-            printf ("TRUE");
-        else
-            printf ("FALSE");
-    }
-    printf ("\n");
-
-    qmc_free (out);
-
-    return 0;
-}
-
-int f3 (bool* table)
-{
-
-    int *out;
-    size_t out_size;
-    size_t i, j;
-
-    /* simplify the table */
-    if (qmc_simplify (table, 3, &out, &out_size))
-    {
-        fprintf (stderr, "Simpification failed!\n");
-        /* No need to call qmc_free(out) if failed */
-        return 1;
-    }
-
-    /* print the output */
-    for (i = 0; i < out_size; ++i)
-    {
-        if (i > 0)
-            printf (" + ");
-
-        for (j = 0; j < 3u; ++j)
-        {
-            switch (out[i * 3u + j])
-            {
-            case 0:    /* the literal is false */
-                printf ("~");
-            case 1:    /* the literal is true */
-                switch (j)
-                {
-                case 0:
-                    printf ("C");
-                    break;
-                case 1:
-                    printf ("B");
-                    break;
-                case 2:
-                    printf ("A");
-                    break;
-                }
-                break;
-            }
-        }
-    }
-
-    if (out_size == 0) /* All table entries are true or false */
-    {
-
-        if (table[0])
-            printf ("TRUE");
-        else
-            printf ("FALSE");
-    }
-    printf ("\n");
-
-    qmc_free (out);
-
-    return 0;
-}
-
-int f2 (bool* table)
-{
-
-    int *out;
-    size_t out_size;
-    size_t i, j;
-
-    /* simplify the table */
-    if (qmc_simplify (table, 2, &out, &out_size))
-    {
-        fprintf (stderr, "Simpification failed!\n");
-        /* No need to call qmc_free(out) if failed */
-        return 1;
-    }
-
-    /* print the output */
-    for (i = 0; i < out_size; ++i)
-    {
-        if (i > 0)
-            printf (" + ");
-
-        for (j = 0; j < 2u; ++j)
-        {
-            switch (out[i * 2u + j])
-            {
-            case 0:    /* the literal is false */
-                printf ("~");
-            case 1:    /* the literal is true */
-                switch (j)
-                {
-                case 0:
-                    printf ("B");
-                    break;
-                case 1:
-                    printf ("A");
-                    break;
-                }
-                break;
-            }
-        }
-    }
-
-    if (out_size == 0) /* All table entries are true or false */
-    {
-
         if (table[0])
             printf ("TRUE");
         else
